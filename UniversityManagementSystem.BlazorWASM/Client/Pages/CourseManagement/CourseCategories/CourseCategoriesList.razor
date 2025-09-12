@@ -1,7 +1,5 @@
-﻿@page "/CourseManagement/CoursesList"
-
-
-
+﻿
+@page "/CourseManagement/CourseCategoriesList"
 
 @inject DialogService _dialogService
 @inject NavigationManager _navigationManager
@@ -10,61 +8,57 @@
 
 <PageTitle>Course Management</PageTitle>
 
-<h3>Courses List</h3>
-<hr />
-
 <RadzenBreadCrumb>
-    <RadzenBreadCrumbItem Path="" Text="Application Management" />
-    <RadzenBreadCrumbItem Path="" Text="Customer For Applications" />
+    <RadzenBreadCrumbItem Path="" Text="Course Management" />
+    <RadzenBreadCrumbItem Path="" Text="Courses List" />
+    <RadzenBreadCrumbItem Path="" Text="Couse Categories List" />
+
 </RadzenBreadCrumb>
 <hr />
 <br />
 
+
+
 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
-    <RadzenButton Text="Add New Course"
+    <RadzenButton Text="Add New Course Category"
                   Icon="add_circle_outline"
                   ButtonStyle="ButtonStyle.Success"
                   Shade="Shade.Dark"
                   Size="ButtonSize.Medium"
                   Click="CreateCourseDialogPopUp"
                   Variant="Variant.Outlined" />
-
-    <RadzenButton Text="Manage Course Categories"
-                  Icon="line_weight"
-                  ButtonStyle="ButtonStyle.Warning"
-                  Shade="Shade.Dark"
-                  Size="ButtonSize.Medium"
-                  Click="ManageCourseCategories"
-                  Variant="Variant.Outlined" />
 </RadzenStack>
 <hr />
-@if (Courses is null)
+
+<h3>Courses Categories List</h3>
+<hr />
+
+@if (CourseCategories is null)
 {
 
     <CircularProgressLoader />
 }
 else
 {
-    <RadzenDataGrid TItem="CourseViewModel"
+    <RadzenDataGrid TItem="CourseCategoryViewModel"
                     AllowFiltering="true"
                     ShowPagingSummary="true"
                     AllowColumnResize="true"
                     ColumnWidth="300px" AllowSorting="true" AllowPaging="true" PageSize="10"
-                    Data="@Courses">
+                    Data="@CourseCategories">
         <Columns>
-            <RadzenDataGridColumn TItem="CourseViewModel" Property="Name" Title="Name" />
-            <RadzenDataGridColumn TItem="CourseViewModel" Property="CourseCategory" Title="Course Category" />
-            <RadzenDataGridColumn TItem="CourseViewModel" Property="IsActive" Title="Active" TextAlign="TextAlign.Center">
+            <RadzenDataGridColumn TItem="CourseCategoryViewModel" Property="Name" Title="Name" />
+            <RadzenDataGridColumn TItem="CourseCategoryViewModel" Property="IsActive" Title="Active" TextAlign="TextAlign.Center">
                 <Template Context="data">
                     <RadzenCheckBox @bind-Value="data.IsActive"
                                     Disabled="true" />
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="CourseViewModel" TextAlign="TextAlign.Left" Title="Actions">
+            <RadzenDataGridColumn TItem="CourseCategoryViewModel" TextAlign="TextAlign.Left" Title="Actions">
                 <Template Context="data">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
-                        <RadzenButton Text="Update" Icon="edit" Click="@(() => UpdateCourseDialogPopUp(data.Id))" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Warning" Style="width:100%" />
-                        <RadzenButton Text="Delete" Icon="delete" Click="@(() => DeleteCourse(data.Id))" IsBusy="@busy" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Danger" Style="width:100%" />
+                        <RadzenButton Text="Update" Icon="edit" Click="@(() => UpdateCourseCategoryDialogPopUp(data.Id))" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Warning" Style="width:100%" />
+                        <RadzenButton Text="Delete" Icon="delete" Click="@(() => DeleteCourseCategory(data.Id))" IsBusy="@busy" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Danger" Style="width:100%" />
                     </RadzenStack>
                 </Template>
             </RadzenDataGridColumn>
@@ -72,26 +66,25 @@ else
     </RadzenDataGrid>
 }
 
-
 @code {
-    public IEnumerable<CourseViewModel>? Courses { get; set; }
+    public IEnumerable<CourseCategoryViewModel>? CourseCategories { get; set; }
 
     private bool busy = false;
     protected override async Task OnInitializedAsync()
     {
-        await LoadCoursesData();
+        await LoadCourseCategoriesData();
     }
 
-    private async Task LoadCoursesData()
+    private async Task LoadCourseCategoriesData()
     {
-        Courses = null;
+        CourseCategories = null;
 
-        var data = await _httpClient.GetStringAsync(FrontEndApiEndpointsConfig.CourseEndpoint);
+        var data = await _httpClient.GetStringAsync(FrontEndApiEndpointsConfig.CourseCategoryEndpoint);
 
-        var result = JsonSerializer.Deserialize<BaseResponse<IEnumerable<CourseViewModel>>>(data, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var result = JsonSerializer.Deserialize<BaseResponse<IEnumerable<CourseCategoryViewModel>>>(data, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         if (result.Succeeded)
         {
-            Courses = result.ResponseData;
+            CourseCategories = result.ResponseData;
         }
         else if (result.Succeeded is false)
         {
@@ -105,9 +98,10 @@ else
 
             }
 
-            Courses = new List<CourseViewModel>();
+            CourseCategories = new List<CourseCategoryViewModel>();
         }
     }
+
 
     private async Task CreateCourseDialogPopUp()
     {
@@ -119,15 +113,16 @@ else
             Draggable = true
         };
 
-        var result = await _dialogService.OpenAsync<CreateCourse>("Create Course", null, dialogOptions);
+        var result = await _dialogService.OpenAsync<CreateCourseCategory>("Create Course Category", null, dialogOptions);
 
         if (result is not null)
         {
-            await LoadCoursesData();
+            await LoadCourseCategoriesData();
         }
     }
 
-    private async Task UpdateCourseDialogPopUp(int courseId)
+
+    private async Task UpdateCourseCategoryDialogPopUp(int courseCategoryId)
     {
         DialogOptions dialogOptions = new DialogOptions()
         {
@@ -137,19 +132,19 @@ else
             Draggable = true
         };
 
-        var result = await _dialogService.OpenAsync<UpdateCourse>("Update Course", new Dictionary<string, object>() { { "courseId", courseId } }, dialogOptions);
+        var result = await _dialogService.OpenAsync<UpdateCourseCategory>("Update Course Category", new Dictionary<string, object>() { { "courseCategoryId", courseCategoryId } }, dialogOptions);
 
         if (result is not null)
         {
-            await LoadCoursesData();
+            await LoadCourseCategoriesData();
         }
 
     }
 
-    private async Task DeleteCourse(int courseId)
+    private async Task DeleteCourseCategory(int courseId)
     {
         busy = true;
-        var result = await _httpClient.DeleteAsync($"{FrontEndApiEndpointsConfig.CourseEndpoint}/{courseId}");
+        var result = await _httpClient.DeleteAsync($"{FrontEndApiEndpointsConfig.CourseCategoryEndpoint}/{courseId}");
         if (result.IsSuccessStatusCode)
         {
             var data = await result.Content.ReadFromJsonAsync<BaseResponse<CourseViewModel>>();
@@ -157,14 +152,9 @@ else
             {
                 busy = false;
                 ShowSuccessMessage(data.Message);
-                await LoadCoursesData();
+                await LoadCourseCategoriesData();
             }
         }
-    }
-
-    void ManageCourseCategories()
-    {
-        _navigationManager.NavigateTo("/CourseManagement/CourseCategoriesList");
     }
 
     void ShowErrorNotificationMessage(string ErrorMessage, string ExceptionErrorMessage)

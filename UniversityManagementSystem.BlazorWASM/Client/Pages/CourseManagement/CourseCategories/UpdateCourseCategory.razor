@@ -1,0 +1,129 @@
+﻿@inject DialogService _dialogService
+@inject NavigationManager _navigationManager
+@inject NotificationService _NotificationService
+@inject HttpClient _httpClient
+
+
+<RadzenTemplateForm TItem="CourseCategoryUpdateModel" Data="@courseCategoryToUpdate" Submit="OnCourseCategoryUpdate" Style="max-width:500px; margin:auto; border:1px solid #dcdcdc; padding:1rem; border-radius:0.5rem;">
+
+    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Start" Gap="1rem">
+
+        <!-- Course Name -->
+        <RadzenLabel Text="Course Category Name" Component="label" Style="font-weight:600;" />
+        <RadzenTextBox @bind-Value="@CourseCategoryName" Placeholder="Enter course Category name" Style="width:100%;" Name="CourseCategoryName" />
+        <RadzenRequiredValidator Component="CourseCategoryName"
+                                 Text="Course Category name is required"
+                                 @bind-Value="@CourseCategoryName" />
+
+        <!-- Buttons -->
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1rem" Wrap="FlexWrap.Wrap">
+            <RadzenButton Text="Update Course"
+                          Icon="add_circle_outline"
+                          ButtonStyle="ButtonStyle.Success"
+                          Shade="Shade.Dark"
+                          Size="ButtonSize.Medium"
+                          Variant="Variant.Filled"
+                          ButtonType="ButtonType.Submit" />
+
+            <RadzenButton Text="Cancel"
+                          Icon="dangerous"
+                          ButtonStyle="ButtonStyle.Danger"
+                          Shade="Shade.Dark"
+                          Size="ButtonSize.Medium"
+                          Variant="Variant.Filled"
+                          Click="cancel" />
+        </RadzenStack>
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code {
+
+    [Parameter]
+    public int? courseCategoryId { get; set; }
+
+    private string CourseCategoryName { get; set; }
+
+    private bool busy = false;
+
+    public CourseCategoryUpdateModel courseCategoryToUpdate { get; set; } = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (courseCategoryId is not null || courseCategoryId is not 0)
+        {
+            var data = await _httpClient.GetStringAsync($"{FrontEndApiEndpointsConfig.CourseCategoryEndpoint}/{courseCategoryId}");
+            var result = JsonSerializer.Deserialize<BaseResponse<CourseCategoryViewModel>>(data, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (result.Succeeded)
+            {
+                CourseCategoryName = result.ResponseData.Name;
+            }
+            else if (result.Succeeded is false)
+            {
+                if (result.ExceptionError is not null)
+                {
+                    ShowErrorNotificationMessage(result.Message, result.ExceptionError);
+                }
+                else
+                {
+                    ShowErrorNotificationMessage(result.Message, string.Empty);
+
+                }
+            }
+
+        }
+
+    }
+
+
+    private void ShowErrorNotificationMessage(string ErrorMessage, string ExceptionErrorMessage)
+    {
+        var message = new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Error,
+            Summary = $"{ErrorMessage}",
+            Detail = ExceptionErrorMessage is null ? "" : ExceptionErrorMessage,
+            Duration = 40000
+        };
+        _NotificationService.Notify(message);
+    }
+
+
+    private async Task OnCourseCategoryUpdate()
+    {
+        courseCategoryToUpdate.Id = (int)courseCategoryId;
+        courseCategoryToUpdate.Name = CourseCategoryName;
+
+        busy = true;
+
+        var result = await _httpClient.PutAsJsonAsync($"{FrontEndApiEndpointsConfig.CourseCategoryEndpoint}", courseCategoryToUpdate);
+        if (result.IsSuccessStatusCode)
+        {
+            var data = await result.Content.ReadFromJsonAsync<BaseResponse<CourseCategoryViewModel>>();
+            if (data.Succeeded)
+            {
+                busy = false;
+                ShowSuccessMessage(data.Message);
+                _dialogService.Close(data.ResponseData);
+            }
+        }
+    }
+
+    private void ShowSuccessMessage(string Message)
+    {
+        var message = new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Success,
+            Summary = $"Success",
+            Detail = $"{Message}",
+            Duration = 1000
+        };
+        _NotificationService.Notify(message);
+    }
+
+    private void cancel()
+    {
+        _dialogService.Close(null);
+    }
+
+}

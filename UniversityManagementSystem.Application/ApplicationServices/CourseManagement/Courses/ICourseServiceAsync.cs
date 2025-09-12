@@ -14,6 +14,9 @@ namespace UniversityManagementSystem.Application.ApplicationServices.CourseManag
         Task<BaseResponse<IEnumerable<CourseViewModel>>> GetAllCoursesByCourseCategoryId(int courseCategoryId);
         Task<BaseResponse<CourseViewModel>> CreateCourseAsync(CourseInputModel courseToCreate);
         Task<BaseResponse<CourseViewModel>> UpdateCourseAsync(CourseUpdateModel courseToUpdate);
+        Task<BaseResponse<CourseViewModel>> GetCourseByIdAsync(int courseId);
+        Task<BaseResponse<CourseViewModel>> DeleteCourseAsync(int courseId);
+
     }
 }
  

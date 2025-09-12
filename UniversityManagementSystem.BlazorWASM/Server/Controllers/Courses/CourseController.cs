@@ -21,14 +21,20 @@ namespace UniversityManagementSystem.BlazorWASM.Server.Controllers.Courses
             return Ok(await _courseServiceAsync.GetAllCoursesAsync());
         }
 
-        [HttpGet("{courseCategoryId}")]
+        [HttpGet("{courseId}")]
+        public async Task<IActionResult> GetCourseById(int courseId)
+        {
+            return Ok(await _courseServiceAsync.GetCourseByIdAsync(courseId));
+        }
+
+        [HttpGet("courseCategory/{courseCategoryId}")]
         public async Task<IActionResult> GetAllCoursesByCourseCategoryId(int courseCategoryId)
         {
             return Ok(await _courseServiceAsync.GetAllCoursesByCourseCategoryId(courseCategoryId));
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCourse([FromBody] CourseInputModel courseToCreate) 
+        public async Task<IActionResult> CreateCourse([FromBody] CourseInputModel courseToCreate)
         {
             return Ok(await _courseServiceAsync.CreateCourseAsync(courseToCreate));
         }
@@ -37,6 +43,12 @@ namespace UniversityManagementSystem.BlazorWASM.Server.Controllers.Courses
         public async Task<IActionResult> UpdateCourse([FromBody] CourseUpdateModel courseToUpdate)
         {
             return Ok(await _courseServiceAsync.UpdateCourseAsync(courseToUpdate));
+        }
+
+        [HttpDelete("{courseId}")]
+        public async Task<IActionResult> DeleteCourse(int courseId)
+        {
+            return Ok(await _courseServiceAsync.DeleteCourseAsync(courseId));
         }
     }
 }

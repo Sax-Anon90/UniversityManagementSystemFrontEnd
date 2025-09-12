@@ -31,6 +31,15 @@ namespace UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.Cours
             return response;
         }
 
+        public async Task<BaseResponse<CourseViewModel>> DeleteCourseAsync(int courseId)
+        {
+            var response = await $"{_apiServiceConfig.BaseUri}".AppendPathSegment($"{_apiServiceConfig.CourseEndpoint}/{courseId}")
+                                                                 .AllowAnyHttpStatus()
+                                                                 .DeleteAsync()
+                                                                 .ReceiveJson<BaseResponse<CourseViewModel>>();
+            return response;
+        }
+
         public async Task<BaseResponse<IEnumerable<CourseViewModel>>> GetAllCoursesAsync()
         {
             var response = await $"{_apiServiceConfig.BaseUri}".AppendPathSegment($"{_apiServiceConfig.CourseEndpoint}")
@@ -44,6 +53,14 @@ namespace UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.Cours
             var response = await $"{_apiServiceConfig.BaseUri}".AppendPathSegment($"{_apiServiceConfig.CourseEndpoint}/{courseCategoryId}")
                                                                    .AllowAnyHttpStatus()
                                                                    .GetJsonAsync<BaseResponse<IEnumerable<CourseViewModel>>>();
+            return response;
+        }
+
+        public async Task<BaseResponse<CourseViewModel>> GetCourseByIdAsync(int courseId)
+        {
+            var response = await $"{_apiServiceConfig.BaseUri}".AppendPathSegment($"{_apiServiceConfig.CourseEndpoint}/{courseId}")
+                                                                  .AllowAnyHttpStatus()
+                                                                  .GetJsonAsync<BaseResponse<CourseViewModel>>();
             return response;
         }
 

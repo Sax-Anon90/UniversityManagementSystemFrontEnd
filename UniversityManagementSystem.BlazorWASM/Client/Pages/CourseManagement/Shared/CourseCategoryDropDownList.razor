@@ -1,0 +1,100 @@
+﻿@inject DialogService _dialogService
+@inject NavigationManager _navigationManager
+@inject NotificationService _NotificationService
+@inject HttpClient _httpClient
+
+
+
+@if (CourseCategories is null)
+{
+    <CircularProgressLoader />
+}
+else
+{
+    <RadzenLabel Text="Select Course Category" Component="label" Style="font-weight:600;" />
+    <RadzenDropDown TValue="int"
+                    Name="CourseDropDown"
+                    TextProperty="Name"
+                    ValueProperty="Id"
+                    @bind-Value="CourseCategoryId"
+                    Change="OnSelectedCourseCategoryChanged"
+                    Data="@CourseCategories"
+                    Placeholder="Choose a category..."
+                    Style="width:100%;" />
+}
+
+@code {
+
+    [Parameter]
+    public int CourseCategoryId { get; set; }
+
+    [Parameter] 
+    public EventCallback<int> OnCourseCategorySelected { get; set; }
+
+    private IEnumerable<CourseCategoryViewModel>? CourseCategories { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCourseCategoriesData();
+    }
+
+    private async Task OnSelectedCourseCategoryChanged(object value)
+    {
+        if (value is int categoryId)
+        {
+            await OnCourseCategorySelected.InvokeAsync(categoryId);
+        }
+    }
+
+    private async Task LoadCourseCategoriesData()
+    {
+        CourseCategories = null;
+
+        var data = await _httpClient.GetStringAsync(FrontEndApiEndpointsConfig.CourseCategoryEndpoint);
+
+        var result = JsonSerializer.Deserialize<BaseResponse<IEnumerable<CourseCategoryViewModel>>>(data, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        if (result.Succeeded)
+        {
+            CourseCategories = result.ResponseData;
+        }
+        else if (result.Succeeded is false)
+        {
+            if (result.ExceptionError is not null)
+            {
+                ShowErrorNotificationMessage(result.Message, result.ExceptionError);
+            }
+            else
+            {
+                ShowErrorNotificationMessage(result.Message, string.Empty);
+
+            }
+
+            CourseCategories = new List<CourseCategoryViewModel>();
+        }
+    }
+
+    private void ShowErrorNotificationMessage(string ErrorMessage, string ExceptionErrorMessage)
+    {
+        var message = new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Error,
+            Summary = $"{ErrorMessage}",
+            Detail = ExceptionErrorMessage is null ? "" : ExceptionErrorMessage,
+            Duration = 40000
+        };
+        _NotificationService.Notify(message);
+    }
+
+    private void ShowSuccessMessage(string Message)
+    {
+        var message = new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Success,
+            Summary = $"Success",
+            Detail = $"{Message}",
+            Duration = 1000
+        };
+        _NotificationService.Notify(message);
+    }
+
+}

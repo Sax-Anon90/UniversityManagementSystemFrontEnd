@@ -41,6 +41,14 @@ namespace UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.Cours
             return response;
         }
 
+        public async Task<BaseResponse<CourseCategoryViewModel>> GetCourseByCourseCategory(int courseCategoryId)
+        {
+            var response = await $"{_apiServiceConfig.BaseUri}".AppendPathSegment($"{_apiServiceConfig.CourseCategoryEndpoint}/{courseCategoryId}")
+                                                                  .AllowAnyHttpStatus()
+                                                                  .GetJsonAsync<BaseResponse<CourseCategoryViewModel>>();
+            return response;
+        }
+
         public async Task<BaseResponse<CourseCategoryViewModel>> UpdateCourseCategoryAsync(CourseCategoryUpdateModel courseCategoryToUpdate)
         {
             var response = await $"{_apiServiceConfig.BaseUri}".AppendPathSegment($"{_apiServiceConfig.CourseCategoryEndpoint}")
@@ -52,5 +60,16 @@ namespace UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.Cours
                                                                   .ReceiveJson<BaseResponse<CourseCategoryViewModel>>();
             return response;
         }
+
+        public async Task<BaseResponse<CourseCategoryViewModel>> DeleteCourseCategoryAsync(int courseCategoryId)
+        {
+            var response = await $"{_apiServiceConfig.BaseUri}".AppendPathSegment($"{_apiServiceConfig.CourseCategoryEndpoint}/{courseCategoryId}")
+                                                                  .AllowAnyHttpStatus()
+                                                                  .DeleteAsync()
+                                                                  .ReceiveJson<BaseResponse<CourseCategoryViewModel>>();
+            return response;
+        }
+
+        
     }
 }
