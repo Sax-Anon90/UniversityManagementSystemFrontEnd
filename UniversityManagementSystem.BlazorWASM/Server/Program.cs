@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.ResponseCompression;
+using UniversityManagementSystem.ApiLayer.ApiServiceRegistration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+builder.Services.AddApiLayerServices(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

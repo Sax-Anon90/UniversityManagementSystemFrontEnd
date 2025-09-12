@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\CourseManagement\Courses\CoursesList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.20" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.20" PrivateAssets="all" />
@@ -18,10 +22,21 @@
 
   <ItemGroup>
     <Folder Include="Pages\AdminAccountManagement\" />
-    <Folder Include="Pages\CourseManagement\Courses\" />
     <Folder Include="Pages\CourseManagement\CourseCategory\" />
     <Folder Include="Pages\StudentManagement\" />
     <Folder Include="Pages\StudentDashboard\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\CourseManagement\Courses\CoursesList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\CourseManagement\Courses\CoursesList.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\CourseManagement\Courses\CoursesList.razor" />
   </ItemGroup>
 
 </Project>

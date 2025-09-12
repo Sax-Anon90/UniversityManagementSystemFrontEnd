@@ -13,17 +13,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrustructure", "Infrustru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{764686A6-2833-4029-B4F7-D9E88AD5D498}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityManagementSystem.Data", "UniversityManagementSystem.Data\UniversityManagementSystem.Data.csproj", "{8EDDB902-763B-4652-B96D-840DD1914115}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversityManagementSystem.Data", "UniversityManagementSystem.Data\UniversityManagementSystem.Data.csproj", "{8EDDB902-763B-4652-B96D-840DD1914115}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityManagementSystem.Application", "UniversityManagementSystem.Application\UniversityManagementSystem.Application.csproj", "{293FE689-9317-49C0-9BD2-0ED12BB5F3CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversityManagementSystem.Application", "UniversityManagementSystem.Application\UniversityManagementSystem.Application.csproj", "{293FE689-9317-49C0-9BD2-0ED12BB5F3CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityManagementSystem.ApiLayer", "UniversityManagementSystem.ApiLayer\UniversityManagementSystem.ApiLayer.csproj", "{40C75C72-B883-4992-92E4-9C190AB7C890}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversityManagementSystem.ApiLayer", "UniversityManagementSystem.ApiLayer\UniversityManagementSystem.ApiLayer.csproj", "{40C75C72-B883-4992-92E4-9C190AB7C890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityManagementSystem.BlazorWASM.Server", "UniversityManagementSystem.BlazorWASM\Server\UniversityManagementSystem.BlazorWASM.Server.csproj", "{4212753C-CEC1-4DC5-923A-B4C7CDF8EB78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversityManagementSystem.BlazorWASM.Server", "UniversityManagementSystem.BlazorWASM\Server\UniversityManagementSystem.BlazorWASM.Server.csproj", "{4212753C-CEC1-4DC5-923A-B4C7CDF8EB78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityManagementSystem.BlazorWASM.Client", "UniversityManagementSystem.BlazorWASM\Client\UniversityManagementSystem.BlazorWASM.Client.csproj", "{EDF5190C-A595-4B09-8C4C-0CC755B36D51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversityManagementSystem.BlazorWASM.Client", "UniversityManagementSystem.BlazorWASM\Client\UniversityManagementSystem.BlazorWASM.Client.csproj", "{EDF5190C-A595-4B09-8C4C-0CC755B36D51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversityManagementSystem.BlazorWASM.Shared", "UniversityManagementSystem.BlazorWASM\Shared\UniversityManagementSystem.BlazorWASM.Shared.csproj", "{F5126702-E0D5-43AF-8DDE-06F2518A3C81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversityManagementSystem.BlazorWASM.Shared", "UniversityManagementSystem.BlazorWASM\Shared\UniversityManagementSystem.BlazorWASM.Shared.csproj", "{F5126702-E0D5-43AF-8DDE-06F2518A3C81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

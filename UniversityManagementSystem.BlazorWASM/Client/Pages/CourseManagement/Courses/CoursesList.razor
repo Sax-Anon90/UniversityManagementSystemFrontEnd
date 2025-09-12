@@ -1,0 +1,41 @@
+﻿
+@page "/Courses/CourseList"
+
+@inject DialogService _dialogService
+@inject NavigationManager _navigationManager
+@inject NotificationService _NotificationService
+@inject HttpClient _httpClient
+
+<PageTitle>Course Management</PageTitle>
+
+<h3>Courses List</h3>
+<hr />
+
+<RadzenBreadCrumb>
+    <RadzenBreadCrumbItem Path="" Text="Application Management" />
+    <RadzenBreadCrumbItem Path="" Text="Customer For Applications" />
+</RadzenBreadCrumb>
+<hr />
+<br />
+
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
+    <RadzenButton Text="Add New Course"
+                  Icon="add_circle_outline"
+                  ButtonStyle="ButtonStyle.Success"
+                  Shade="Shade.Dark"
+                  Size="ButtonSize.Medium"
+                  Variant="Variant.Outlined" />
+
+    <RadzenButton Text="Manage Course Categories"
+                  Icon="line_weight"
+                  ButtonStyle="ButtonStyle.Warning"
+                  Shade="Shade.Dark"
+                  Size="ButtonSize.Medium"
+                  Variant="Variant.Outlined" />
+</RadzenStack>
+<hr />
+
+@code {
+    public IEnumerable<CourseViewModel>? CoursesList { get; set; }
+
+}
