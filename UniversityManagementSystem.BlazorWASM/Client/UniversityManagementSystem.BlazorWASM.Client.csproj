@@ -6,7 +6,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\CourseManagement\Courses\CoursesList.razor" />
+    <Compile Remove="Pages\AdminAccountManagement\**" />
+    <Compile Remove="Pages\CourseManagement\CourseCategory\**" />
+    <Compile Remove="Pages\StudentDashboard\**" />
+    <Compile Remove="Pages\StudentManagement\**" />
+    <Content Remove="Pages\AdminAccountManagement\**" />
+    <Content Remove="Pages\CourseManagement\CourseCategory\**" />
+    <Content Remove="Pages\StudentDashboard\**" />
+    <Content Remove="Pages\StudentManagement\**" />
+    <EmbeddedResource Remove="Pages\AdminAccountManagement\**" />
+    <EmbeddedResource Remove="Pages\CourseManagement\CourseCategory\**" />
+    <EmbeddedResource Remove="Pages\StudentDashboard\**" />
+    <EmbeddedResource Remove="Pages\StudentManagement\**" />
+    <None Remove="Pages\AdminAccountManagement\**" />
+    <None Remove="Pages\CourseManagement\CourseCategory\**" />
+    <None Remove="Pages\StudentDashboard\**" />
+    <None Remove="Pages\StudentManagement\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,22 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shared\UniversityManagementSystem.BlazorWASM.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\AdminAccountManagement\" />
-    <Folder Include="Pages\CourseManagement\CourseCategory\" />
-    <Folder Include="Pages\StudentManagement\" />
-    <Folder Include="Pages\StudentDashboard\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Pages\CourseManagement\Courses\CoursesList.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Pages\CourseManagement\Courses\CoursesList.razor" />
+    <ProjectReference Include="..\..\UniversityManagementSystem.Application\UniversityManagementSystem.Application.csproj" />
+    <ProjectReference Include="..\..\UniversityManagementSystem.Data\UniversityManagementSystem.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.CourseCategory;
+using UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.CourseEnrollments;
 using UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.Courses;
 using UniversityManagementSystem.ApiLayer.BaseApiServiceConfig;
 using UniversityManagementSystem.Application.ApplicationServices.CourseManagement.CourseCategory;
@@ -22,7 +23,7 @@ namespace UniversityManagementSystem.ApiLayer.ApiServiceRegistration
 
             services.AddTransient<ICourseServiceAsync, CourseServiceAsync>();
             services.AddTransient<ICourseCategoryService, CourseCategoryServiceAsync>();
-            services.AddTransient<ICourseEnrollmentServiceAsync, ICourseEnrollmentServiceAsync>();
+            services.AddTransient<ICourseEnrollmentServiceAsync, CourseEnrollmentServiceAsync>();
 
             return services;
         }

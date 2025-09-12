@@ -1,5 +1,7 @@
-﻿
-@page "/Courses/CourseList"
+﻿@page "/CourseManagement/CoursesList"
+
+
+
 
 @inject DialogService _dialogService
 @inject NavigationManager _navigationManager
@@ -34,13 +36,103 @@
                   Variant="Variant.Outlined" />
 </RadzenStack>
 <hr />
+@if (Courses is null)
+{
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <RadzenProgressBarCircular ShowValue="true"
+                                   Mode="ProgressBarMode.Indeterminate"
+                                   Size="ProgressBarCircularSize.Medium">
+        </RadzenProgressBarCircular>
+    </div>
+}
+else
+{
+    <RadzenDataGrid TItem="CourseViewModel"
+                    AllowFiltering="true"
+                    ShowPagingSummary="true"
+                    AllowColumnResize="true"
+                    ColumnWidth="300px" AllowSorting="true" AllowPaging="true" PageSize="10"
+                    Data="@Courses">
+        <Columns>
+            <RadzenDataGridColumn TItem="CourseViewModel" Property="Name" Title="Name" />
+            <RadzenDataGridColumn TItem="CourseViewModel" Property="CourseCategory" Title="Course Category" />
+            <RadzenDataGridColumn TItem="CourseViewModel" Property="IsActive" Title="Active" TextAlign="TextAlign.Center">
+                <Template Context="data">
+                    <RadzenCheckBox @bind-Value="data.IsActive"
+                                    Disabled="true" />
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="CourseViewModel" TextAlign="TextAlign.Left" Title="Actions">
+                <Template Context="data">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
+                        <RadzenButton Text="Edit" Icon="edit" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Warning" Style="width:100%" />
+                        <RadzenButton Text="Delete" Icon="delete" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Danger" Style="width:100%" />
+                    </RadzenStack>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
+
 
 @code {
-    public IEnumerable<CourseViewModel>? CoursesList { get; set; }
+    public IEnumerable<CourseViewModel>? Courses { get; set; } 
 
-    protected ovveride async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
+        await LoadCoursesData();
+    }
 
+    private async Task LoadCoursesData()
+    {
+        Courses = null;
+
+        var data = await _httpClient.GetStringAsync(FrontEndApiEndpointsConfig.CourseEndpoint);
+
+        var result = JsonSerializer.Deserialize<BaseResponse<IEnumerable<CourseViewModel>>>(data,new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        if (result.Succeeded)
+        {
+            Courses = result.ResponseData;
+        }
+        else if(result.Succeeded is false)
+        {
+            if(result.ExceptionError is not null)
+            {
+                ShowErrorNotificationMessage(result.Message, result.ExceptionError);
+            }
+            else
+            {
+                ShowErrorNotificationMessage(result.Message, string.Empty);
+
+            }
+
+            Courses = new List<CourseViewModel>();
+        }
+    }
+
+
+    void ShowErrorNotificationMessage(string ErrorMessage, string ExceptionErrorMessage)
+    {
+        var message = new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Error,
+            Summary = $"{ErrorMessage}",
+            Detail = ExceptionErrorMessage is null ? "" : ExceptionErrorMessage,
+            Duration = 40000
+        };
+        _NotificationService.Notify(message);
+    }
+
+    void ShowSuccessMessage(string Message)
+    {
+        var message = new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Success,
+            Summary = $"Success",
+            Detail = $"{Message}",
+            Duration = 1000
+        };
+        _NotificationService.Notify(message);
     }
 
 }

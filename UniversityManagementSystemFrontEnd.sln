@@ -23,8 +23,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversityManagementSystem.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversityManagementSystem.BlazorWASM.Client", "UniversityManagementSystem.BlazorWASM\Client\UniversityManagementSystem.BlazorWASM.Client.csproj", "{EDF5190C-A595-4B09-8C4C-0CC755B36D51}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UniversityManagementSystem.BlazorWASM.Shared", "UniversityManagementSystem.BlazorWASM\Shared\UniversityManagementSystem.BlazorWASM.Shared.csproj", "{F5126702-E0D5-43AF-8DDE-06F2518A3C81}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,10 +49,6 @@ Global
 		{EDF5190C-A595-4B09-8C4C-0CC755B36D51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDF5190C-A595-4B09-8C4C-0CC755B36D51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDF5190C-A595-4B09-8C4C-0CC755B36D51}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5126702-E0D5-43AF-8DDE-06F2518A3C81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5126702-E0D5-43AF-8DDE-06F2518A3C81}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5126702-E0D5-43AF-8DDE-06F2518A3C81}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5126702-E0D5-43AF-8DDE-06F2518A3C81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,7 +63,6 @@ Global
 		{40C75C72-B883-4992-92E4-9C190AB7C890} = {16D866E3-BDDD-4EAE-B1B0-1A19B2E1BC2D}
 		{4212753C-CEC1-4DC5-923A-B4C7CDF8EB78} = {764686A6-2833-4029-B4F7-D9E88AD5D498}
 		{EDF5190C-A595-4B09-8C4C-0CC755B36D51} = {764686A6-2833-4029-B4F7-D9E88AD5D498}
-		{F5126702-E0D5-43AF-8DDE-06F2518A3C81} = {764686A6-2833-4029-B4F7-D9E88AD5D498}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B0823CD3-0696-45A3-9180-52762BFC8E3A}

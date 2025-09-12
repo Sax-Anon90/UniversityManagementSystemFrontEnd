@@ -13,7 +13,6 @@
     <ProjectReference Include="..\..\UniversityManagementSystem.ApiLayer\UniversityManagementSystem.ApiLayer.csproj" />
     <ProjectReference Include="..\..\UniversityManagementSystem.Application\UniversityManagementSystem.Application.csproj" />
     <ProjectReference Include="..\Client\UniversityManagementSystem.BlazorWASM.Client.csproj" />
-    <ProjectReference Include="..\Shared\UniversityManagementSystem.BlazorWASM.Shared.csproj" />
   </ItemGroup>
 
 
