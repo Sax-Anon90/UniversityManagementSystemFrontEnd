@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.20" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\UniversityManagementSystem.ApiLayer\UniversityManagementSystem.ApiLayer.csproj" />
+    <ProjectReference Include="..\..\UniversityManagementSystem.Application\UniversityManagementSystem.Application.csproj" />
+    <ProjectReference Include="..\Client\UniversityManagementSystem.BlazorWASM.Client.csproj" />
+    <ProjectReference Include="..\Shared\UniversityManagementSystem.BlazorWASM.Shared.csproj" />
+  </ItemGroup>
+
+
+</Project>
