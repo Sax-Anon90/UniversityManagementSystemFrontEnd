@@ -16,4 +16,12 @@
     <ProjectReference Include="..\Shared\UniversityManagementSystem.BlazorWASM.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\AdminAccountManagement\" />
+    <Folder Include="Pages\CourseManagement\Courses\" />
+    <Folder Include="Pages\CourseManagement\CourseCategory\" />
+    <Folder Include="Pages\StudentManagement\" />
+    <Folder Include="Pages\StudentDashboard\" />
+  </ItemGroup>
+
 </Project>
