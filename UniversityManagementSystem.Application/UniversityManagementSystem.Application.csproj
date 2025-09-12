@@ -10,4 +10,12 @@
     <ProjectReference Include="..\UniversityManagementSystem.Data\UniversityManagementSystem.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ApplicationServices\AdminAccountManagement\AdminAccount\" />
+    <Folder Include="ApplicationServices\AdminAccountManagement\AdminAccountRoles\" />
+    <Folder Include="ApplicationServices\AdminAccountManagement\Roles\" />
+    <Folder Include="ApplicationServices\CourseManagement\CourseEnrollments\" />
+    <Folder Include="ApplicationServices\StudentManagement\StudentAccounts\" />
+  </ItemGroup>
+
 </Project>

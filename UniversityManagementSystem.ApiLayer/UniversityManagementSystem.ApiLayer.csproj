@@ -11,4 +11,17 @@
     <ProjectReference Include="..\UniversityManagementSystem.Data\UniversityManagementSystem.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ApiServices\CourseManagement\CourseCategory\" />
+    <Folder Include="ApiServices\CourseManagement\Courses\" />
+    <Folder Include="ApiServices\CourseManagement\CourseEnrollments\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Flurl" Version="4.0.0" />
+    <PackageReference Include="Flurl.Http" Version="4.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+  </ItemGroup>
+
 </Project>
