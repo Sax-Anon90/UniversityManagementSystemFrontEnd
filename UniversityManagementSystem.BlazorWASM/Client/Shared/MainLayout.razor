@@ -1,17 +1,65 @@
 ﻿@inherits LayoutComponentBase
 
+
+
+<RadzenComponents />
+
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
+        <RadzenLayout>
+            <RadzenHeader>
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+                    <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+                    <RadzenBadge Style="background-color:#e75425;">
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.25rem">
+                            <RadzenIcon Icon="account_box" />Welcome @DisplayName
+                        </RadzenStack>
+                    </RadzenBadge>
+                    <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-0">
+                        University Management System
+                    </RadzenStack>
+                </RadzenStack>
+            </RadzenHeader>
+            <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded">
+                <RadzenPanelMenu>
+                    <RadzenPanelMenuItem Text="My Student Dashboard" Icon="apps" Path="/Counter" />
+                    <RadzenPanelMenuItem Text="Course Management" Icon="apps" Path="/Counter" />
+                    <RadzenPanelMenuItem Text="Student Management" Icon="apps" Path="/Counter" />
+                    <RadzenPanelMenuItem Text="Admin Account Management" Icon="apps" Path="/Counter" />
+                    <RadzenPanelMenuItem Text="Logout" Icon="logout" Click="Logout" />
+                </RadzenPanelMenu>
+            </RadzenSidebar>
+            <RadzenBody Style="padding-left:10px;">
+                <ErrorBoundary>
+                    <ChildContent>
+                        @Body
+                    </ChildContent>
+                    <ErrorContent Context="exception">
+                        <RadzenAlert AllowClose="true" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter">
+                            <span>An unexpected error has occured in the application!. We Apologize for this</span>
+                            <br />
+                            <span>Error detail: @exception.Message</span>
+                            <br />
+                            <span>We Apologize for this. Please Logout and log back in again. If the problem persists contact the systems administrator!</span>
+                        </RadzenAlert>
+                        @Body
+                    </ErrorContent>
+                </ErrorBoundary>
+            </RadzenBody>
+            <RadzenFooter Style="height:48px">
+                <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Center">
+                    University Management System © 2023 All Rights Reserved
+                </RadzenText>
+            </RadzenFooter>
+        </RadzenLayout>
     </main>
 </div>
+
+@code {
+    public string? DisplayName { get; set; } = string.Empty;
+    bool sidebarExpanded = true;
+
+    private async Task Logout()
+    {
+    }
+}
