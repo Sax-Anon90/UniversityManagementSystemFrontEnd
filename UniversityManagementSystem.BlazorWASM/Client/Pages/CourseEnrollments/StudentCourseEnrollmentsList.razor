@@ -1,0 +1,22 @@
+﻿@inject DialogService _dialogService
+@inject NavigationManager _navigationManager
+@inject NotificationService _NotificationService
+@inject HttpClient _httpClient
+
+
+<h3>My course enrollments</h3>
+<hr />
+
+<br />
+
+<RadzenButton Text="New Course"
+              Icon="add_circle_outline"
+              ButtonStyle="ButtonStyle.Success"
+              Shade="Shade.Dark"
+              Size="ButtonSize.Medium"
+             @*  Click="CreateCourseDialogPopUp" *@
+              Variant="Variant.Outlined" />
+
+@code {
+
+}

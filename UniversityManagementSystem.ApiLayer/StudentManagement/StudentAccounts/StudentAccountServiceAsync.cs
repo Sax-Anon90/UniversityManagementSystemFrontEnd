@@ -54,7 +54,7 @@ namespace UniversityManagementSystem.ApiLayer.StudentManagement.StudentAccounts
                                                                        studentAccountToCreate = studentAccountToCreate
                                                                    })
                                                                    .ReceiveJson<BaseResponse<StudentAccountViewModel>>();
-            return response; ;
+            return response; 
         }
 
         public async Task<BaseResponse<StudentAccountViewModel>> UpdateStudentAccountAsync(StudentAccountUpdateModel studentAccountToUpdate)

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using UniversityManagementSystem.Application.Common;
 using UniversityManagementSystem.Data.Models.CourseManagement.CourseEnrollments;
 
-namespace UniversityManagementSystem.Application.ApplicationServices.CourseManagement.CourseEnrollments
+namespace UniversityManagementSystem.Application.ApplicationServices.CourseEnrollments
 {
-    public interface ICourseEnrollmentServiceAsync
+    public interface ICourseEnrollmentsServiceAsync
     {
         Task<BaseResponse<IEnumerable<CourseEnrollmentViewModel>>> GetAllStudentCourseEnrollmentsByStudentIdAsync(int studentId);
         Task<BaseResponse<CourseEnrollmentViewModel>> CreateCourseEnrollmentAsync(CourseEnrollmentInputModel courseEnrollmentToCreate);
         Task<BaseResponse<CourseEnrollmentViewModel>> DeleteCourseEnrollmentAsync(int courseEnrollmentId);
+
     }
 }
-    
