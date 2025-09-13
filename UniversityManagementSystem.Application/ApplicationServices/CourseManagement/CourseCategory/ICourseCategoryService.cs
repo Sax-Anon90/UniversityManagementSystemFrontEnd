@@ -12,7 +12,7 @@ namespace UniversityManagementSystem.Application.ApplicationServices.CourseManag
     public interface ICourseCategoryService
     {
         Task<BaseResponse<IEnumerable<CourseCategoryViewModel>>> GetAllCourseCategoriesAsync();
-        Task<BaseResponse<CourseCategoryViewModel>> GetCourseByCourseCategory(int courseCategoryId);
+        Task<BaseResponse<CourseCategoryViewModel>> GetCourseByCourseCategoryId(int courseCategoryId);
         Task<BaseResponse<CourseCategoryViewModel>> CreateCourseCategoryAsync(CourseCategoryInputModel courseCategoryToCreate);
         Task<BaseResponse<CourseCategoryViewModel>> UpdateCourseCategoryAsync(CourseCategoryUpdateModel courseCategoryToUpdate);
 

@@ -24,7 +24,7 @@ namespace UniversityManagementSystem.BlazorWASM.Server.Controllers.CourseCategor
         [HttpGet("{courseCategoryId}")]
         public async Task<IActionResult> GetAllCourseCategories(int courseCategoryId)
         {
-            return Ok(await _courseCategoryService.GetAllCourseCategoriesAsync());
+            return Ok(await _courseCategoryService.GetCourseByCourseCategoryId(courseCategoryId));
         }
 
         [HttpPost]

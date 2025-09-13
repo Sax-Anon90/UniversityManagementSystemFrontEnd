@@ -1,0 +1,178 @@
+﻿@page "/SignIn"
+@using System.IdentityModel.Tokens.Jwt
+@using UniversityManagementSystem.BlazorWASM.Client.Providers
+
+
+
+
+@inject NotificationService _NotificationService
+@inject ILocalStorageService _localStorageService
+@inject AuthenticationStateProvider _authenticationStateProvider
+@inject NavigationManager _navigationManager
+@inject HttpClient _httpClient
+
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        background-color: #121212; /* Radzen dark base */
+        color: #fff; /* light text */
+    }
+</style>
+
+
+<RadzenTemplateForm TItem="UserAuthDetailsModel" Data="@userAuthDetailsModel" Submit="AuthenticateUserAsync">
+    <RadzenStack Gap="0" Class="rz-my-12 rz-mx-auto rz-border-radius-12 rz-shadow-10"
+                 Style="width: 100%; max-width: 400px; background-color: var(--rz-base-900);">
+        <RadzenColumn>
+            <!-- Header -->
+            <RadzenCard Class="rz-shadow-0 rz-border-radius-0 rz-p-6" Style="background: var(--rz-base-900);">
+                <RadzenRow JustifyContent="JustifyContent.Center">
+                    <RadzenIcon Icon="account_circle" Size="50px" Style="color: var(--rz-secondary);" />
+                </RadzenRow>
+                <RadzenRow JustifyContent="JustifyContent.Center" Class="rz-mt-2">
+                    <h2 style="color: var(--rz-text-primary); font-weight:600;">Welcome Back</h2>
+                </RadzenRow>
+                <RadzenRow JustifyContent="JustifyContent.Center" Class="rz-mb-4">
+                    <p style="color: var(--rz-text-secondary);">Sign in to continue</p>
+                </RadzenRow>
+
+                <!-- Email -->
+                <div class="col-12 rz-mb-3">
+                    <RadzenLabel Text="Email" Style="color: var(--rz-text-primary);" />
+                    <RadzenFormField Variant="Variant.Outlined" Style="width: 100%;">
+                        <RadzenTextBox Name="Email" Placeholder="Enter your email"
+                                       Style="width: 100%;" @bind-Value="@Email" />
+                    </RadzenFormField>
+                    <RadzenRequiredValidator Component="Email" Text="Please enter your email" Popup="false" />
+                </div>
+
+                <!-- Password -->
+                <div class="col-12 rz-mb-3">
+                    <RadzenLabel Text="Password" Style="color: var(--rz-text-primary);" />
+                    <RadzenFormField Variant="Variant.Outlined" Style="width: 100%;">
+                        <RadzenPassword Name="Password" Placeholder="Enter your password"
+                                        Style="width: 100%;" @bind-Value="@Password" />
+                    </RadzenFormField>
+                    <RadzenRequiredValidator Component="Password" Text="Please enter your password" Popup="false" />
+                </div>
+
+                <!-- Login Button -->
+                <RadzenButton BusyText="Signing in..." IsBusy=@busy Variant="Variant.Outlined"
+                              ButtonType="ButtonType.Submit" Text="Login"
+                              Class="rz-mt-4"
+                              Style="width: 100%; background-color: var(--rz-secondary); color: white;" />
+
+                <!-- Extra Links -->
+                <RadzenRow JustifyContent="JustifyContent.Center" Class="rz-mt-4">
+                    <a href="/forgot-password" style="color: var(--rz-text-secondary); font-size: 0.9rem;">
+                        Forgot your password?
+                    </a>
+                </RadzenRow>
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenStack>
+</RadzenTemplateForm>
+
+
+@code {
+
+    public string? Email { get; set; }
+    public string? Password { get; set; }
+    public bool busy { get; set; }
+
+    public string AppVersion { get; set; }
+
+    public UserAuthDetailsModel userAuthDetailsModel { get; set; } = new();
+
+
+    private async Task AuthenticateUserAsync()
+    {
+
+        busy = true;
+
+        userAuthDetailsModel.Email = Email;
+        userAuthDetailsModel.Password = Password;
+        var data = await _httpClient.PostAsJsonAsync(FrontEndApiEndpointsConfig.AuthEndpoint, userAuthDetailsModel);
+        if (data.IsSuccessStatusCode)
+        {
+            var authenticationResult = await data.Content.ReadFromJsonAsync<BaseResponse<AuthUserResponse>>();
+            if (authenticationResult?.Succeeded == true)
+            {
+                JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
+
+                var tokenContent = jwtSecurityTokenHandler.ReadJwtToken(authenticationResult.ResponseData.JwtAccessToken);
+
+                var userType = tokenContent.Claims.FirstOrDefault(c => c.Type == "UserType")?.Value;
+
+
+                //Store Jwt Access Token
+                await _localStorageService.SetItemAsync("AccessToken", authenticationResult.ResponseData.JwtAccessToken);
+
+                //Change Auth State of the app
+                await ((CustomAuthenticationStateProvider)_authenticationStateProvider).LoggedInAuthenticationState();
+
+                if (userType == "Admin")
+                {
+                    _navigationManager.NavigateTo("/CourseManagement/CoursesList", forceLoad: true);
+                }
+                else
+                {
+                    _navigationManager.NavigateTo("/Dashboard/StudentDashboard", forceLoad: true);
+                }
+
+                busy = false;
+
+                //ShowSuccessMessage("Successfully Authenticated!");
+
+
+            }
+            else if (authenticationResult.Succeeded == false)
+            {
+                busy = false;
+
+                if (authenticationResult.ExceptionError != null)
+                {
+                    ShowErrorNotificationMessage(authenticationResult.Message, authenticationResult.ExceptionError);
+                }
+                else
+                {
+                    ShowErrorNotificationMessage(authenticationResult.Message, string.Empty);
+                }
+            }
+        }
+        else
+        {
+            ShowErrorNotificationMessage("Error", "Cannot establish connection to the server");
+            busy = false;
+        }
+
+    }
+
+    void ShowErrorNotificationMessage(string ErrorMessage, string ExceptionErrorMessage)
+    {
+        var message = new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Error,
+            Summary = $"{ErrorMessage}",
+            Detail = ExceptionErrorMessage is null ? "" : ExceptionErrorMessage,
+            Duration = 40000
+        };
+        _NotificationService.Notify(message);
+    }
+
+    void ShowSuccessMessage(string Message)
+    {
+        var message = new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Success,
+            Summary = $"Success",
+            Detail = $"{Message}",
+            Duration = 1000
+        };
+        _NotificationService.Notify(message);
+    }
+
+
+
+}

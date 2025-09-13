@@ -41,7 +41,7 @@ namespace UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.Cours
             return response;
         }
 
-        public async Task<BaseResponse<CourseCategoryViewModel>> GetCourseByCourseCategory(int courseCategoryId)
+        public async Task<BaseResponse<CourseCategoryViewModel>> GetCourseByCourseCategoryId(int courseCategoryId)
         {
             var response = await $"{_apiServiceConfig.BaseUri}".AppendPathSegment($"{_apiServiceConfig.CourseCategoryEndpoint}/{courseCategoryId}")
                                                                   .AllowAnyHttpStatus()
@@ -53,7 +53,7 @@ namespace UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.Cours
         {
             var response = await $"{_apiServiceConfig.BaseUri}".AppendPathSegment($"{_apiServiceConfig.CourseCategoryEndpoint}")
                                                                   .AllowAnyHttpStatus()
-                                                                  .PostJsonAsync(new
+                                                                  .PutJsonAsync(new
                                                                   {
                                                                       courseCategoryToUpdate = courseCategoryToUpdate
                                                                   })

@@ -5,53 +5,66 @@
 <RadzenComponents />
 
 <div class="page">
+
     <main>
-        <RadzenLayout>
-            <RadzenHeader>
-                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
-                    <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
-                    <RadzenBadge Style="background-color:#e75425;">
-                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.25rem">
-                            <RadzenIcon Icon="account_box" />Welcome @DisplayName
+        <AuthorizeView Context="main">
+            <Authorized>
+                <RadzenLayout>
+                    <RadzenHeader>
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
+                            <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+                            <RadzenBadge Style="background-color:#e75425;">
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.25rem">
+                                    <RadzenIcon Icon="account_box" />Welcome @DisplayName
+                                </RadzenStack>
+                            </RadzenBadge>
+                            <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-0">
+                                University Management System
+                            </RadzenStack>
                         </RadzenStack>
-                    </RadzenBadge>
-                    <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-0">
-                        University Management System
-                    </RadzenStack>
-                </RadzenStack>
-            </RadzenHeader>
-            <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded">
-                <RadzenPanelMenu>
-        @*             <RadzenPanelMenuItem Text="My Student Dashboard" Icon="apps" Path="" /> *@
-                    <RadzenPanelMenuItem Text="Course Management" Icon="apps" Path="/CourseManagement/CoursesList" />
-@*                     <RadzenPanelMenuItem Text="Student Management" Icon="apps" Path="" />
-                    <RadzenPanelMenuItem Text="Admin Account Management" Icon="apps" Path="" /> *@
-                    <RadzenPanelMenuItem Text="Logout" Icon="logout" Click="Logout" />
-                </RadzenPanelMenu>
-            </RadzenSidebar>
-            <RadzenBody Style="padding-left:10px;">
-                <ErrorBoundary>
-                    <ChildContent>
-                        @Body
-                    </ChildContent>
-                    <ErrorContent Context="exception">
-                        <RadzenAlert AllowClose="true" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter">
-                            <span>An unexpected error has occured in the application!. We Apologize for this</span>
-                            <br />
-                            <span>Error detail: @exception.Message</span>
-                            <br />
-                            <span>We Apologize for this. Please Logout and log back in again. If the problem persists contact the systems administrator!</span>
-                        </RadzenAlert>
-                        @Body
-                    </ErrorContent>
-                </ErrorBoundary>
-            </RadzenBody>
-            <RadzenFooter Style="height:48px">
-                <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Center">
-                    University Management System © 2023 All Rights Reserved
-                </RadzenText>
-            </RadzenFooter>
-        </RadzenLayout>
+                    </RadzenHeader>
+                    <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded">
+                        <RadzenPanelMenu>
+                            @*             <RadzenPanelMenuItem Text="My Student Dashboard" Icon="apps" Path="" /> *@
+                            <AuthorizeView Roles="Super Admin">
+                                <RadzenPanelMenuItem Text="Course Management" Icon="apps" Path="/CourseManagement/CoursesList" />
+                            </AuthorizeView>
+                            <AuthorizeView Roles="Student">
+                                <RadzenPanelMenuItem Text="My Dashboard" Icon="apps" Path="/Dashboard/StudentDashboard" />
+                            </AuthorizeView>
+                            <RadzenPanelMenuItem Text="Logout" Icon="logout" Click="Logout" />
+                        </RadzenPanelMenu>
+                    </RadzenSidebar>
+                    <RadzenBody Style="padding-left:10px;">
+                        <ErrorBoundary>
+                            <ChildContent>
+                                @Body
+                            </ChildContent>
+                            <ErrorContent Context="exception">
+                                <RadzenAlert AllowClose="true" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter">
+                                    <span>An unexpected error has occured in the application!. We Apologize for this</span>
+                                    <br />
+                                    <span>Error detail: @exception.Message</span>
+                                    <br />
+                                    <span>We Apologize for this. Please Logout and log back in again. If the problem persists contact the systems administrator!</span>
+                                </RadzenAlert>
+                                @Body
+                            </ErrorContent>
+                        </ErrorBoundary>
+                    </RadzenBody>
+                    <RadzenFooter Style="height:48px">
+                        <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Center">
+                            University Management System © 2023 All Rights Reserved
+                        </RadzenText>
+                    </RadzenFooter>
+                </RadzenLayout>
+            </Authorized>
+            <NotAuthorized>
+                <Login />
+            </NotAuthorized>
+
+        </AuthorizeView>
+
     </main>
 </div>
 
