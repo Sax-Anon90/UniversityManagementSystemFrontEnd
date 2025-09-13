@@ -50,7 +50,7 @@ namespace UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.Cours
 
         public async Task<BaseResponse<IEnumerable<CourseViewModel>>> GetAllCoursesByCourseCategoryId(int courseCategoryId)
         {
-            var response = await $"{_apiServiceConfig.BaseUri}".AppendPathSegment($"{_apiServiceConfig.CourseEndpoint}/{courseCategoryId}")
+            var response = await $"{_apiServiceConfig.BaseUri}".AppendPathSegment($"{_apiServiceConfig.CourseEndpoint}/courseCategory/{courseCategoryId}")
                                                                    .AllowAnyHttpStatus()
                                                                    .GetJsonAsync<BaseResponse<IEnumerable<CourseViewModel>>>();
             return response;

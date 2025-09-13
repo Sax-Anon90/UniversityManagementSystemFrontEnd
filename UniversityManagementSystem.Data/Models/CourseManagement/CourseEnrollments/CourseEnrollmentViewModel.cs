@@ -15,5 +15,6 @@ namespace UniversityManagementSystem.Data.Models.CourseManagement.CourseEnrollme
         public int CourseId { get; set; }
         public string StudentFullName { get; set; }
         public string CourseName { get; set; }
+        public string CourseCategory { get; set; }
     }
 }

@@ -2,21 +2,151 @@
 @inject NavigationManager _navigationManager
 @inject NotificationService _NotificationService
 @inject HttpClient _httpClient
+@inject ILocalStorageService _localStorageService;
 
-
-<h3>My course enrollments</h3>
-<hr />
 
 <br />
+<h3>My course enrollment</h3>
+<hr />
 
-<RadzenButton Text="New Course"
+<RadzenButton Text="New Course Enrollment"
               Icon="add_circle_outline"
               ButtonStyle="ButtonStyle.Success"
               Shade="Shade.Dark"
+              Click="NavigateToNewCourseEnrollment"
               Size="ButtonSize.Medium"
-             @*  Click="CreateCourseDialogPopUp" *@
               Variant="Variant.Outlined" />
 
+<hr />
+@if (courseEnrollments is null)
+{
+
+    <CircularProgressLoader />
+}
+else
+{
+    @if (!courseEnrollments.Any())
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter">
+            You are not Enrolled in any course yet. Enroll and learn now!
+        </RadzenAlert>
+    }
+    <RadzenDataGrid TItem="CourseEnrollmentViewModel"
+                    AllowFiltering="true"
+                    ShowPagingSummary="true"
+                    AllowColumnResize="true"
+                    ColumnWidth="300px" AllowSorting="true" AllowPaging="true" PageSize="10"
+                    Data="@courseEnrollments">
+        <Columns>
+            <RadzenDataGridColumn TItem="CourseEnrollmentViewModel" Property="CourseName" Title="Course Name" />
+            <RadzenDataGridColumn TItem="CourseEnrollmentViewModel" Property="CourseCategory" Title="Course Category" />
+            <RadzenDataGridColumn TItem="CourseEnrollmentViewModel" TextAlign="TextAlign.Left" Title="Actions">
+                <Template Context="data">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
+                        <RadzenButton Text="Deregister" Icon="delete" Click="(() => DeRegisterFromCourse(data.Id))" IsBusy="busy" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Warning" Style="width:100%" />
+                    </RadzenStack>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
+
+
 @code {
+
+    public IEnumerable<CourseEnrollmentViewModel>? courseEnrollments { get; set; }
+    public int StudentAccountId { get; set; }
+
+    private bool busy;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await _localStorageService.GetItemAsync<string>("AccessToken");
+        if (token is not null)
+        {
+            JwtSecurityTokenHandler tokenHander = new();
+            var tokenContent = tokenHander.ReadJwtToken(token);
+
+            var studentId = tokenContent.Claims.FirstOrDefault(c => c.Type == "StudentAccountId")?.Value;
+            StudentAccountId = Convert.ToInt32(studentId);
+        }
+
+        await LoadStudentCourseEnrollmentsDataCoursesData();
+    }
+
+
+    private async Task LoadStudentCourseEnrollmentsDataCoursesData()
+    {
+        courseEnrollments = null;
+
+        var data = await _httpClient.GetStringAsync($"{FrontEndApiEndpointsConfig.CourseEnrollmentEndpoint}/{StudentAccountId}");
+
+        var result = JsonSerializer.Deserialize<BaseResponse<IEnumerable<CourseEnrollmentViewModel>>>(data, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        if (result.Succeeded)
+        {
+            courseEnrollments = result.ResponseData;
+        }
+        else if (result.Succeeded is false)
+        {
+            if (result.ExceptionError is not null)
+            {
+                ShowErrorNotificationMessage(result.Message, result.ExceptionError);
+            }
+            else
+            {
+                ShowErrorNotificationMessage(result.Message, string.Empty);
+
+            }
+
+            courseEnrollments = new List<CourseEnrollmentViewModel>();
+        }
+    }
+
+    private async Task DeRegisterFromCourse(int courseEnrollmentId)
+    {
+        busy = true;
+
+        var result = await _httpClient.DeleteAsync($"{FrontEndApiEndpointsConfig.CourseEnrollmentEndpoint}/{courseEnrollmentId}");
+        if (result.IsSuccessStatusCode)
+        {
+            var data = await result.Content.ReadFromJsonAsync<BaseResponse<CourseEnrollmentViewModel>>();
+            if (data.Succeeded)
+            {
+                busy = false;
+                ShowSuccessMessage(data.Message);
+                await LoadStudentCourseEnrollmentsDataCoursesData();
+
+            }
+        }
+    }
+
+
+    private void NavigateToNewCourseEnrollment()
+    {
+        _navigationManager.NavigateTo("/courseEnrollment");
+    }
+    void ShowErrorNotificationMessage(string ErrorMessage, string ExceptionErrorMessage)
+    {
+        var message = new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Error,
+            Summary = $"{ErrorMessage}",
+            Detail = ExceptionErrorMessage is null ? "" : ExceptionErrorMessage,
+            Duration = 40000
+        };
+        _NotificationService.Notify(message);
+    }
+
+    void ShowSuccessMessage(string Message)
+    {
+        var message = new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Success,
+            Summary = $"Success",
+            Detail = $"{Message}",
+            Duration = 1000
+        };
+        _NotificationService.Notify(message);
+    }
 
 }

@@ -1,0 +1,184 @@
+﻿@page "/courseEnrollment"
+
+@inject DialogService _dialogService
+@inject NavigationManager _navigationManager
+@inject NotificationService _NotificationService
+@inject HttpClient _httpClient
+@inject ILocalStorageService _localStorageService;
+
+<h3>Enroll in a new course now!</h3>
+<br />
+<CourseCategoryDropDownList OnCourseCategorySelected="LoadCoursesByCourseCategory" />
+<hr />
+@if (courseEnrollments is null)
+{
+    <CircularProgressLoader />
+}
+else
+{
+    @if (busy)
+    {
+        <CircularProgressLoader />
+    }
+    else
+    {
+        <RadzenDataGrid TItem="CourseViewModel"
+                        AllowFiltering="true"
+                        ShowPagingSummary="true"
+                        AllowColumnResize="true"
+                        ColumnWidth="300px" AllowSorting="true" AllowPaging="true" PageSize="10"
+                        Data="@courses">
+            <Columns>
+                <RadzenDataGridColumn TItem="CourseViewModel" Property="Name" Title="Course Name" />
+                <RadzenDataGridColumn TItem="CourseViewModel" TextAlign="TextAlign.Left" Title="Actions">
+                    <Template Context="data">
+                        @if (courseEnrollments.Any(x => x.CourseId == data.Id))
+                        {
+                            <RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false">
+                                Already Enrolled
+                            </RadzenAlert>
+                        }
+                        else
+                        {
+                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
+                                <RadzenButton Text="Enroll" IsBusy="IsEnrolBusy" Icon="edit" Click="(() => EnrolStudentOnCourse(data.Id))" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Warning" Style="width:100%" />
+                            </RadzenStack>
+                        }
+
+                    </Template>
+                </RadzenDataGridColumn>
+
+            </Columns>
+        </RadzenDataGrid>
+    }
+
+}
+
+@code {
+    public IEnumerable<CourseEnrollmentViewModel>? courseEnrollments { get; set; }
+    public IEnumerable<CourseViewModel> courses { get; set; } = new List<CourseViewModel>();
+
+    public int StudentAccountId { get; set; }
+    private bool busy = false;
+    private bool IsEnrolBusy = false;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await _localStorageService.GetItemAsync<string>("AccessToken");
+        if (token is not null)
+        {
+            JwtSecurityTokenHandler tokenHander = new();
+            var tokenContent = tokenHander.ReadJwtToken(token);
+
+            var studentId = tokenContent.Claims.FirstOrDefault(c => c.Type == "StudentAccountId")?.Value;
+            StudentAccountId = Convert.ToInt32(studentId);
+        }
+
+        await LoadStudentCourseEnrollmentsDataCoursesData();
+    }
+
+    private async Task LoadCoursesByCourseCategory(int courseCategoryId)
+    {
+        busy = true;
+        var data = await _httpClient.GetStringAsync($"{FrontEndApiEndpointsConfig.CourseEndpoint}/courseCategory/{courseCategoryId}");
+
+        var result = JsonSerializer.Deserialize<BaseResponse<IEnumerable<CourseViewModel>>>(data, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        if (result.Succeeded)
+        {
+            busy = false;
+            courses = result.ResponseData;
+        }
+        else if (result.Succeeded is false)
+        {
+            if (result.ExceptionError is not null)
+            {
+                ShowErrorNotificationMessage(result.Message, result.ExceptionError);
+            }
+            else
+            {
+                ShowErrorNotificationMessage(result.Message, string.Empty);
+
+            }
+            busy = false;
+            courses = new List<CourseViewModel>();
+        }
+    }
+
+    private async Task LoadStudentCourseEnrollmentsDataCoursesData()
+    {
+        courseEnrollments = null;
+
+        var data = await _httpClient.GetStringAsync($"{FrontEndApiEndpointsConfig.CourseEnrollmentEndpoint}/{StudentAccountId}");
+
+        var result = JsonSerializer.Deserialize<BaseResponse<IEnumerable<CourseEnrollmentViewModel>>>(data, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        if (result.Succeeded)
+        {
+            courseEnrollments = result.ResponseData;
+        }
+        else if (result.Succeeded is false)
+        {
+            if (result.ExceptionError is not null)
+            {
+                ShowErrorNotificationMessage(result.Message, result.ExceptionError);
+            }
+            else
+            {
+                ShowErrorNotificationMessage(result.Message, string.Empty);
+
+            }
+
+            courseEnrollments = new List<CourseEnrollmentViewModel>();
+        }
+    }
+
+    private async Task EnrolStudentOnCourse(int courseId)
+    {
+        IsEnrolBusy = true;
+        var courseToEnrol = new CourseEnrollmentInputModel()
+        {
+            StudentId = StudentAccountId,
+            CourseId = courseId
+        };
+
+        var result = await _httpClient.PostAsJsonAsync(FrontEndApiEndpointsConfig.CourseEnrollmentEndpoint, courseToEnrol);
+        if (result.IsSuccessStatusCode)
+        {
+            var data = await result.Content.ReadFromJsonAsync<BaseResponse<CourseEnrollmentViewModel>>();
+            if (data.Succeeded)
+            {
+                IsEnrolBusy = false;
+                ShowSuccessMessage(data.Message);
+                await LoadStudentCourseEnrollmentsDataCoursesData();
+
+            }
+        }
+
+    }
+
+    void ShowErrorNotificationMessage(string ErrorMessage, string ExceptionErrorMessage)
+    {
+        var message = new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Error,
+            Summary = $"{ErrorMessage}",
+            Detail = ExceptionErrorMessage is null ? "" : ExceptionErrorMessage,
+            Duration = 40000
+        };
+        _NotificationService.Notify(message);
+    }
+
+    void ShowSuccessMessage(string Message)
+    {
+        var message = new NotificationMessage()
+        {
+            Severity = NotificationSeverity.Success,
+            Summary = $"Success",
+            Detail = $"{Message}",
+            Duration = 1000
+        };
+        _NotificationService.Notify(message);
+    }
+
+}
