@@ -141,10 +141,10 @@ else
 
     }
 
-    private async Task DeleteCourseCategory(int courseId)
+    private async Task DeleteCourseCategory(int courseCategoryId)
     {
         busy = true;
-        var result = await _httpClient.DeleteAsync($"{FrontEndApiEndpointsConfig.CourseCategoryEndpoint}/{courseId}");
+        var result = await _httpClient.DeleteAsync($"{FrontEndApiEndpointsConfig.CourseCategoryEndpoint}/{courseCategoryId}");
         if (result.IsSuccessStatusCode)
         {
             var data = await result.Content.ReadFromJsonAsync<BaseResponse<CourseViewModel>>();
@@ -154,6 +154,14 @@ else
                 ShowSuccessMessage(data.Message);
                 await LoadCourseCategoriesData();
             }
+            else
+            {
+                busy = false;
+            }
+        }
+        else
+        {
+            busy = false;
         }
     }
 

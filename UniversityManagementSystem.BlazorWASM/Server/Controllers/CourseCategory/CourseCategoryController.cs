@@ -38,5 +38,11 @@ namespace UniversityManagementSystem.BlazorWASM.Server.Controllers.CourseCategor
         {
             return Ok(await _courseCategoryService.UpdateCourseCategoryAsync(courseCategoryToUpdate));
         }
+
+        [HttpDelete("{courseCategoryId}")]
+        public async Task<IActionResult> DeleteCourseCategory(int courseCategoryId)
+        {
+            return Ok(await _courseCategoryService.DeleteCourseCategoryAsync(courseCategoryId));
+        }
     }
 }
