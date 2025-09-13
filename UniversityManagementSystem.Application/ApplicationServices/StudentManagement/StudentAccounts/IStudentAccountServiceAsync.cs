@@ -11,8 +11,8 @@ namespace UniversityManagementSystem.Application.ApplicationServices.StudentMana
     public interface IStudentAccountServiceAsync
     {
         Task<BaseResponse<IEnumerable<StudentAccountViewModel>>> GetAllStudentAccountsAsync();
+        Task<BaseResponse<StudentAccountViewModel>> RegisterStudentAccountAsync(StudentAccountInputModel studentAccountToRegister);
         Task<BaseResponse<StudentAccountViewModel>> GetStudentAccountByIdAsync(int studentAccountId);
-        Task<BaseResponse<StudentAccountViewModel>> CreateStudentAccountAsync(StudentAccountInputModel studentAccountToCreate);
         Task<BaseResponse<StudentAccountViewModel>> UpdateStudentAccountAsync(StudentAccountUpdateModel studentAccountToUpdate);
         Task<BaseResponse<StudentAccountViewModel>> DeleteStudentAccountAsync(int studentAccountId);
     }

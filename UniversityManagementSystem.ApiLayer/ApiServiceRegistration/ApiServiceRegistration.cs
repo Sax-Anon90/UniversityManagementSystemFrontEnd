@@ -10,10 +10,12 @@ using UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.CourseCat
 using UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.CourseEnrollments;
 using UniversityManagementSystem.ApiLayer.ApiServices.CourseManagement.Courses;
 using UniversityManagementSystem.ApiLayer.BaseApiServiceConfig;
+using UniversityManagementSystem.ApiLayer.StudentManagement.StudentAccounts;
 using UniversityManagementSystem.Application.ApplicationServices.Authentication;
 using UniversityManagementSystem.Application.ApplicationServices.CourseManagement.CourseCategory;
 using UniversityManagementSystem.Application.ApplicationServices.CourseManagement.CourseEnrollments;
 using UniversityManagementSystem.Application.ApplicationServices.CourseManagement.Courses;
+using UniversityManagementSystem.Application.ApplicationServices.StudentManagement.StudentAccounts;
 
 namespace UniversityManagementSystem.ApiLayer.ApiServiceRegistration
 {
@@ -27,6 +29,8 @@ namespace UniversityManagementSystem.ApiLayer.ApiServiceRegistration
             services.AddTransient<ICourseCategoryService, CourseCategoryServiceAsync>();
             services.AddTransient<ICourseEnrollmentServiceAsync, CourseEnrollmentServiceAsync>();
             services.AddTransient<IAuthenticationServiceAsync, AuthenticationServiceAsync>();
+            services.AddTransient<IStudentAccountServiceAsync, StudentAccountServiceAsync>();
+
 
             return services;
         }
