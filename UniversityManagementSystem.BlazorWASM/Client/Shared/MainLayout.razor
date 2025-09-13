@@ -1,5 +1,8 @@
-﻿@inherits LayoutComponentBase
-
+﻿@using UniversityManagementSystem.BlazorWASM.Client.Providers
+@inherits LayoutComponentBase
+@inject AuthenticationStateProvider _authenticationStateProvider
+@inject ILocalStorageService _localStorageService
+@inject NavigationManager _navigationManager
 
 
 <RadzenComponents />
@@ -7,62 +10,124 @@
 
 <div class="page">
     <main>
-        <RadzenLayout>
-            <RadzenHeader>
-                <AuthorizeView>
-                    <Authorized>
+        <AuthorizeView Context="main">
+            <Authorized>
+                <RadzenLayout>
+                    <RadzenHeader>
                         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="3">
                             <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
                             <RadzenBadge Style="background-color:#e75425;">
                                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.25rem">
                                     <RadzenIcon Icon="account_box" />Welcome @DisplayName
                                 </RadzenStack>
-                            </RadzenBadge>
-                            <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-0">
-                                University Management System
-                            </RadzenStack>
+                            </RadzenBadge> <RadzenStack AlignItems="AlignItems.Center" Class="rz-mx-auto rz-my-0"> University Management System </RadzenStack>
                         </RadzenStack>
-                    </Authorized>
-                </AuthorizeView>
-            </RadzenHeader>
+                    </RadzenHeader> <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded">
+                        <RadzenPanelMenu>
+                            @* <RadzenPanelMenuItem Text="My Student Dashboard" Icon="apps" Path="" /> *@ 
+                        <AuthorizeView Roles="Super Admin">
+                                <RadzenPanelMenuItem Text="Course Management" Icon="apps" Path="/CourseManagement/CoursesList" />
+                                <RadzenPanelMenuItem Text="Student Management" Icon="apps" Path="/StudentManagement/StudentList" />
+                            </AuthorizeView>
+                            <AuthorizeView Roles="Student">
+                                <RadzenPanelMenuItem Text="My Dashboard" Icon="apps" Path="/Dashboard/StudentDashboard" />
+                            </AuthorizeView>
+                            <RadzenPanelMenuItem Text="Logout" Icon="logout" Click="Logout" />
+                        </RadzenPanelMenu>
+                    </RadzenSidebar>
+                    <RadzenBody Style="padding-left:10px;">
+                        <ErrorBoundary>
+                            <ChildContent>
+                                @Body
 
-            <AuthorizeView Roles="Super Admin,Admin">
-                <Authorized Context="adminContext">
-                    <RadzenPanelMenuItem Text="Course Management" Icon="apps" Path="/CourseManagement/CoursesList" />
-                    <RadzenPanelMenuItem Text="Student Management" Icon="apps" Path="/StudentManagement/StudentList" />
-                </Authorized>
-            </AuthorizeView>
-
-            <AuthorizeView Roles="Student">
-                <Authorized Context="studentContext">
-                    <RadzenPanelMenuItem Text="My Dashboard" Icon="apps" Path="/Dashboard/StudentDashboard" />
-                </Authorized>
-            </AuthorizeView>
-
-
-            <RadzenBody Style="padding-left:10px;">
-                <ErrorBoundary>
-                    <ChildContent>
-                        @Body
-                    </ChildContent>
-                </ErrorBoundary>
-            </RadzenBody>
-
-            <RadzenFooter Style="height:48px">
-                <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Center">
-                    University Management System © 2023 All Rights Reserved
-                </RadzenText>
-            </RadzenFooter>
-        </RadzenLayout>
+                            </ChildContent>
+                            <ErrorContent Context="exception">
+                                <RadzenAlert AllowClose="true" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter">
+                                    <span>An unexpected error has occured in the application!. We Apologize for this</span> <br />
+                                    <span>Error detail: @exception.Message</span> <br />
+                                    <span>We Apologize for this. Please Logout and log back in again. If the problem persists contact the systems administrator!</span>
+                                </RadzenAlert>
+                                @Body
+                            </ErrorContent>
+                        </ErrorBoundary>
+                    </RadzenBody>
+                    <RadzenFooter Style="height:48px">
+                        <RadzenText TextStyle="TextStyle.Body1" TextAlign="TextAlign.Center">
+                            University Management System © 2023 All Rights Reserved
+                        </RadzenText>
+                    </RadzenFooter>
+                </RadzenLayout>
+            </Authorized>
+            <NotAuthorized>
+                @if (showRegistration)
+                {
+                    <StudentRegistration OnBackToLogin="HandleBackToLogin" />
+                }
+                else
+                {
+                    <Login OnRegisterClicked="HandleRegisterClicked" />
+                }
+            </NotAuthorized>
+        </AuthorizeView>
     </main>
 </div>
 
 
 @code {
     public string? DisplayName { get; set; } = string.Empty;
-    bool sidebarExpanded = true;
+    private bool showRegistration = false;
+
+    private bool sidebarExpanded;
+
+    public bool isRegistrationClicked { get; set; }
+
+
+    private void HandleRegisterClicked()
+    {
+        showRegistration = true;
+    }
+
+    private void HandleBackToLogin()
+    {
+        showRegistration = false;
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await _localStorageService.GetItemAsync<string>("AccessToken");
+            if (token is not null)
+            {
+                JwtSecurityTokenHandler tokenHander = new();
+                var tokenContent = tokenHander.ReadJwtToken(token);
+                DisplayName = tokenContent?.Claims?.FirstOrDefault(x => x.Type == "DisplayName")?.Value.ToString();
+
+                var userType = tokenContent.Claims.FirstOrDefault(c => c.Type == "UserType")?.Value;
+
+                if (userType == "Admin")
+                {
+                    _navigationManager.NavigateTo("/CourseManagement/CoursesList");
+                }
+                else
+                {
+                    _navigationManager.NavigateTo("/Dashboard/StudentDashboard");
+                }
+            }
+        }
+    }
 
     private async Task Logout()
     {
+        await ((CustomAuthenticationStateProvider)_authenticationStateProvider).LoggedOutAuthenticationState();
+
+        await _localStorageService.ClearAsync();
+        //Navigate to main
+        _navigationManager.NavigateTo("/SignIn", forceLoad: true);
     }
 }

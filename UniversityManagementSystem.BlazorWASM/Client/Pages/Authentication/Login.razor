@@ -66,7 +66,7 @@
 
                 <!-- Extra Links -->
                 <RadzenRow JustifyContent="JustifyContent.Center" Class="rz-mt-4">
-                    <a href="/Register" style="color: var(--rz-text-secondary); font-size: 0.9rem;">
+                    <a href="/Register" style="color: var(--rz-text-secondary); font-size: 0.9rem;" @onclick="() => OnRegisterClicked.InvokeAsync()" >
                         Register new account
                     </a>
                 </RadzenRow>
@@ -83,6 +83,8 @@
     public bool busy { get; set; }
 
     public string AppVersion { get; set; }
+
+    [Parameter] public EventCallback OnRegisterClicked { get; set; }
 
     public UserAuthDetailsModel userAuthDetailsModel { get; set; } = new();
 
@@ -115,7 +117,7 @@
 
                 if (userType == "Admin")
                 {
-                    _navigationManager.NavigateTo("/CourseManagement/CoursesList", forceLoad: true);
+                    _navigationManager.NavigateTo("/CourseManagement/CoursesList", forceLoad:true);
                 }
                 else
                 {

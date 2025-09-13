@@ -44,11 +44,18 @@ else
             <RadzenDataGridColumn TItem="StudentAccountViewModel" Property="StudentNumber" Title="Student Number" />
 
 
-            <RadzenDataGridColumn TItem="CourseViewModel" TextAlign="TextAlign.Left" Title="Actions">
+            <RadzenDataGridColumn TItem="StudentAccountViewModel" TextAlign="TextAlign.Left" Title="Actions">
                 <Template Context="data">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
-                        <RadzenButton Text="Activate Account" Icon="add_circle_outline" Click="@(() => ActivateStudentAccount(data.Id))" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Warning" Style="width:100%" />
-                        <RadzenButton Text="Deactivate Account" Icon="delete IsBusy="@busy" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Danger" Style="width:100%" />
+                        @if (data.IsActive)
+                        {
+                            <RadzenButton Text="Deactivate Account" IsBusy="IsDeleteBusy" Click="@(() => DeActivateStudentAccount(data.Id))" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Danger" Style="width:100%" />
+                        }
+                        else
+                        {
+                            <RadzenButton Text="Activate Account" IsBusy="IsUpdateBusy" Click="@(() => ActivateStudentAccount(data.Id))" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Success" Style="width:100%" />
+
+                        }
                     </RadzenStack>
                 </Template>
             </RadzenDataGridColumn>
@@ -59,6 +66,8 @@ else
 @code {
     public IEnumerable<StudentAccountViewModel>? Students { get; set; }
 
+    private bool IsDeleteBusy = false;
+    private bool IsUpdateBusy = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -94,7 +103,55 @@ else
 
     private async Task ActivateStudentAccount(int studentId)
     {
-        
+        if (Students is not null && Students.Any())
+        {
+            var studentAccount = Students.SingleOrDefault(x => x.Id == studentId);
+
+            var studentAccountToUpdate = new StudentAccountUpdateModel()
+            {
+                Id = studentAccount.Id,
+                FirstName = studentAccount.FirstName,
+                LastName = studentAccount.LastName,
+                StudentEmail = studentAccount.StudentEmail,
+                
+                IsActive = true,
+                Gender = studentAccount.Gender,
+                DateOfBirth = studentAccount.DateOfBirth,
+
+            };
+
+            IsUpdateBusy = true;
+            var result = await _httpClient.PutAsJsonAsync($"{FrontEndApiEndpointsConfig.StudentAccountEndpoint}", studentAccountToUpdate);
+            if (result.IsSuccessStatusCode)
+            {
+                var data = await result.Content.ReadFromJsonAsync<BaseResponse<StudentAccountViewModel>>();
+                if (data.Succeeded)
+                {
+                    IsUpdateBusy = false;
+                    ShowSuccessMessage(data.Message);
+                    await LoadStudentData();
+                }
+            }
+        }
+
+    }
+
+    private async Task DeActivateStudentAccount(int studentId)
+    {
+
+        IsDeleteBusy = true;
+        var result = await _httpClient.DeleteAsync($"{FrontEndApiEndpointsConfig.StudentAccountEndpoint}/{studentId}");
+        if (result.IsSuccessStatusCode)
+        {
+            var data = await result.Content.ReadFromJsonAsync<BaseResponse<StudentAccountViewModel>>();
+            if (data.Succeeded)
+            {
+                IsDeleteBusy = false;
+                ShowSuccessMessage(data.Message);
+                await LoadStudentData();
+            }
+        }
+
     }
 
 

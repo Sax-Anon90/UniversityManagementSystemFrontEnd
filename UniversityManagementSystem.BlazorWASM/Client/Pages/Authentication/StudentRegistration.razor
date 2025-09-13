@@ -1,6 +1,5 @@
 ﻿@page "/Register"
-@using System.IdentityModel.Tokens.Jwt
-@using UniversityManagementSystem.BlazorWASM.Client.Providers
+
 
 
 
@@ -87,7 +86,7 @@
 
                 <!-- Extra Links -->
                 <RadzenRow JustifyContent="JustifyContent.Center" Class="rz-mt-4">
-                    <a href="/signIn" style="color: var(--rz-text-secondary); font-size: 0.9rem;">
+                    <a href="/signIn" style="color: var(--rz-text-secondary); font-size: 0.9rem;" @onclick="() => OnBackToLogin.InvokeAsync()">
                        Back to login
                     </a>
                 </RadzenRow>
@@ -107,6 +106,8 @@
     public string AppVersion { get; set; }
 
     public StudentAccountInputModel studentAccountToRegister { get; set; } = new();
+
+    [Parameter] public EventCallback OnBackToLogin { get; set; }
 
 
     private async Task RegisterStudentAccountAsync()
