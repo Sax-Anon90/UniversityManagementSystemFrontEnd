@@ -130,9 +130,12 @@
             var RegistrationResult = await data.Content.ReadFromJsonAsync<BaseResponse<StudentAccountViewModel>>();
             if (RegistrationResult?.Succeeded == true)
             {
-
+                busy = false;
                 ShowSuccessMessage("Successfully Registered!");
-                _navigationManager.NavigateTo("/signIn");
+                FirstName = string.Empty;
+                LastName = string.Empty;
+                Email = string.Empty;
+                Password = string.Empty;
 
 
             }
